@@ -1,0 +1,26 @@
+{
+  "name": "bench23-node",
+  "private": true,
+  "version": "0.0.1",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "author": "Mgen (https://www.mgenware.com)",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn run compile",
+    "compile": "tsc",
+    "start": "yarn run build && node ./dist/main.js",
+    "dev": "yarn run clean && tsc -w",
+    "lint": "tslint --project tsconfig.json --config tslint.json",
+    "clean": "rimraf dist"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.0.0",
+    "@types/node": "^10.3.1",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.1"
+  }
+}

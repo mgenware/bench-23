@@ -69,7 +69,11 @@ func main() {
 	start := time.Now()
 	for _, path := range paths {
 		go func(path string) {
-			ioutil.WriteFile(path, content, 0755)
+			err := ioutil.WriteFile(path, content, 0755)
+			if err != nil {
+				log.Fatal(err)
+			}
+
 			writeWg.Done()
 		}(path)
 	}

@@ -18,7 +18,7 @@ const ITERATION = 10000;
 
   await mkdirAsync(ROOT_DIR);
   const paths: string[] = new Array(ITERATION);
-  const content = readFileAsync('../common/bench_data.json', 'utf8');
+  const content = await readFileAsync('../common/bench_data.json');
   for (let i = 0; i < ITERATION; i++) {
     paths[i] = path.join(ROOT_DIR, i.toString() + '.json');
   }
@@ -31,7 +31,7 @@ const ITERATION = 10000;
 
   console.log(`Reading ${ITERATION} files...`);
   console.time('read');
-  const readJobs = paths.map((p) => readFileAsync(p, 'utf8'));
+  const readJobs = paths.map((p) => readFileAsync(p));
   await Promise.all(readJobs);
   console.timeEnd('read');
 

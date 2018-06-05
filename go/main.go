@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,11 +12,28 @@ import (
 )
 
 const (
-	rootDir   = "huge_dir"
-	iteration = 10000
+	rootDir = "huge_dir"
 )
 
 func main() {
+	args := os.Args[1:]
+
+	// iteration argument
+	if len(args) < 1 {
+		log.Fatal("Missing iteration argument")
+	}
+	iteration, err := strconv.Atoi(args[0])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// parseJSON argument
+	parseJSON := false
+	if len(args) >= 2 && args[1] == "--parse-json" {
+		parseJSON = true
+	}
+
+	// Delete the huge_dir if it already exists
 	if _, err := os.Stat(rootDir); err == nil {
 		err = os.RemoveAll(rootDir)
 		if err != nil {
@@ -23,23 +41,31 @@ func main() {
 		}
 	}
 
-	err := os.Mkdir(rootDir, 0755)
+	// Create the huge_dir
+	err = os.Mkdir(rootDir, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Populate child paths
 	paths := make([]string, iteration, iteration)
-	content, err := ioutil.ReadFile("../common/bench_data.json")
-	if err != nil {
-		log.Fatal(err)
-	}
 	for i := 0; i < iteration; i++ {
 		paths[i] = filepath.Join(rootDir, strconv.Itoa(i)+".json")
 	}
 
+	// Setup the content for each file
+	content, err := ioutil.ReadFile("../common/bench_data.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create the wait group for waiting goroutines
 	var writeWg sync.WaitGroup
 	writeWg.Add(iteration)
 
+	// Benchmarking write
 	log.Printf("Creating %v files...", iteration)
+
 	start := time.Now()
 	for _, path := range paths {
 		go func(path string) {
@@ -54,15 +80,34 @@ func main() {
 	var readWg sync.WaitGroup
 	readWg.Add(iteration)
 
-	log.Printf("Reading %v files...", iteration)
+	// Benchmarking read
+	if parseJSON {
+		log.Printf("Reading and parsing %v files...", iteration)
+	} else {
+		log.Printf("Reading %v files...", iteration)
+	}
+
 	start = time.Now()
 	for _, path := range paths {
 		go func(path string) {
-			ioutil.ReadFile(path)
+			bytes, err := ioutil.ReadFile(path)
+			if err != nil {
+				log.Fatal(err)
+			}
+			if parseJSON {
+				var d interface{}
+				err := json.Unmarshal(bytes, &d)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
 			readWg.Done()
 		}(path)
 	}
 	readWg.Wait()
 	elapsed = time.Now().Sub(start)
 	log.Println(elapsed)
+
+	log.Print("Completed")
 }

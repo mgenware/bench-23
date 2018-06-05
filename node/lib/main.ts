@@ -48,27 +48,27 @@ const ROOT_DIR = 'huge_dir';
   // Setup the content for each file
   const content = await readFileAsync('../common/bench_data.json');
 
+  // Benchmarking write
   console.log(`Creating ${iteration} files...`);
 
-  // Benchmarking write
   console.time('write');
   const writeJobs = paths.map((p) => writeFileAsync(p, content));
   await Promise.all(writeJobs);
   console.timeEnd('write');
 
+  // Benchmarking read
   if (parseJSON) {
     console.log(`Reading and parsing ${iteration} files...`);
   } else {
     console.log(`Reading ${iteration} files...`);
   }
-  // Benchmarking read
+
   console.time('read');
   const readJobs = paths.map(async (p) => {
     const bytes = await readFileAsync(p);
     if (parseJSON) {
-      return JSON.parse(bytes.toString());
-    } else {
-      return bytes;
+      const d = JSON.parse(bytes.toString());
+      console.log(d);
     }
   });
   await Promise.all(readJobs);

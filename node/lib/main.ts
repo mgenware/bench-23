@@ -31,19 +31,27 @@ const ROOT_DIR = 'huge_dir';
     parseJSON = true;
   }
 
+  // Delete the huge_dir if it already exists
   if (await existsAsync(ROOT_DIR)) {
     await del([ROOT_DIR]);
   }
 
+  // Create the huge_dir
   await mkdirAsync(ROOT_DIR);
+
+  // Populate child paths
   const paths: string[] = new Array(iteration);
-  const content = await readFileAsync('../common/bench_data.json');
   for (let i = 0; i < iteration; i++) {
     paths[i] = path.join(ROOT_DIR, i.toString() + '.json');
   }
 
-  console.time('write');
+  // Setup the content for each file
+  const content = await readFileAsync('../common/bench_data.json');
+
   console.log(`Creating ${iteration} files...`);
+
+  // Benchmarking write
+  console.time('write');
   const writeJobs = paths.map((p) => writeFileAsync(p, content));
   await Promise.all(writeJobs);
   console.timeEnd('write');
@@ -53,6 +61,7 @@ const ROOT_DIR = 'huge_dir';
   } else {
     console.log(`Reading ${iteration} files...`);
   }
+  // Benchmarking read
   console.time('read');
   const readJobs = paths.map(async (p) => {
     const bytes = await readFileAsync(p);

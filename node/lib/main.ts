@@ -67,8 +67,7 @@ const ROOT_DIR = 'huge_dir';
   const readJobs = paths.map(async (p) => {
     const bytes = await readFileAsync(p);
     if (parseJSON) {
-      const d = JSON.parse(bytes.toString());
-      console.log(d);
+      JSON.parse(bytes.toString());
     }
   });
   await Promise.all(readJobs);

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { promisify } from 'util';
 import * as path from 'path';
+import * as del from 'del';
 
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
@@ -12,7 +13,7 @@ const ITERATION = 10000;
 
 (async () => {
   if (await existsAsync(ROOT_DIR)) {
-    throw new Error(`${ROOT_DIR} already exists, please delete it and try again`);
+    await del([ROOT_DIR]);
   }
 
   await mkdirAsync(ROOT_DIR);

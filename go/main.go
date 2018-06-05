@@ -17,7 +17,10 @@ const (
 
 func main() {
 	if _, err := os.Stat(rootDir); err == nil {
-		log.Fatalf("%v already exists, please delete it and try again", rootDir)
+		err = os.RemoveAll(rootDir)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	err := os.Mkdir(rootDir, 0755)

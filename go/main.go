@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -26,9 +25,12 @@ func main() {
 		log.Fatal(err)
 	}
 	paths := make([]string, iteration, iteration)
-	content := []byte(strings.Repeat("A", 100000))
+	content, err := ioutil.ReadFile("../common/bench_data.json")
+	if err != nil {
+		log.Fatal(err)
+	}
 	for i := 0; i < iteration; i++ {
-		paths[i] = filepath.Join(rootDir, strconv.Itoa(i)+".txt")
+		paths[i] = filepath.Join(rootDir, strconv.Itoa(i)+".json")
 	}
 
 	var writeWg sync.WaitGroup

@@ -17,9 +17,9 @@ const ITERATION = 10000;
 
   await mkdirAsync(ROOT_DIR);
   const paths: string[] = new Array(ITERATION);
-  const content = 'A'.repeat(100000);
+  const content = readFileAsync('../common/bench_data.json', 'utf8');
   for (let i = 0; i < ITERATION; i++) {
-    paths[i] = path.join(ROOT_DIR, i.toString() + '.txt');
+    paths[i] = path.join(ROOT_DIR, i.toString() + '.json');
   }
 
   console.time('write');

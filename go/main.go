@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -64,7 +65,7 @@ func main() {
 	writeWg.Add(iteration)
 
 	// Benchmarking write
-	log.Printf("Creating %v files...", iteration)
+	fmt.Printf("Creating %v files...\n", iteration)
 
 	start := time.Now()
 	for _, path := range paths {
@@ -79,16 +80,16 @@ func main() {
 	}
 	writeWg.Wait()
 	elapsed := time.Now().Sub(start)
-	log.Println(elapsed)
+	fmt.Println(elapsed)
 
 	var readWg sync.WaitGroup
 	readWg.Add(iteration)
 
 	// Benchmarking read
 	if parseJSON {
-		log.Printf("Reading and parsing %v files...", iteration)
+		fmt.Printf("Reading and parsing %v files...\n", iteration)
 	} else {
-		log.Printf("Reading %v files...", iteration)
+		fmt.Printf("Reading %v files...\n", iteration)
 	}
 
 	start = time.Now()
@@ -111,7 +112,7 @@ func main() {
 	}
 	readWg.Wait()
 	elapsed = time.Now().Sub(start)
-	log.Println(elapsed)
+	fmt.Println(elapsed)
 
-	log.Print("Completed")
+	fmt.Println("Completed")
 }

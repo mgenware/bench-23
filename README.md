@@ -1,5 +1,5 @@
 # bench-23
-A tiny program for benchmarking concurrent file io in Go and Node.js
+A tiny program to benchmark concurrent file I/O performance in Go and Node.js
 
 ## Results
 Tested on CentOS 7, Xeon E3 4 Cores 8 Threads.
